@@ -1,0 +1,15 @@
+
+// Run the test 
+npx playwright test --project=chromium
+
+// Show report 
+npx playwright show-report
+
+// Run test record and generate the simple code
+npx playwright codegen https://www.decathlon.lv/
+
+// Debug test
+npx playwright test --debug --project=chromium
+
+// Code refactor command for Windows
+Shift + Alt + F
