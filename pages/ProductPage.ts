@@ -13,7 +13,7 @@ export class ProductPage {
         );
     }
 
-    async addToCart() {
+    async addItemToCart() {
         await this.addToCartButton.click();
     }
 
@@ -22,7 +22,7 @@ export class ProductPage {
         const productCountInput = await this.page.getByRole("spinbutton");
         await expect(productCountInput).toHaveValue(expectedCount);
     }
-    async addToCard() {
-        await this.addToCartButton.click();
+    async openShoppingBag() {
+        await this.page.getByTestId('action-navigate-to-cart').click()
     }
 }

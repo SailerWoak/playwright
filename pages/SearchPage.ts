@@ -28,14 +28,40 @@ export class SearchPage {
         ]);
     }
 
-    async listOfPrices() {
-        return await this.prices.evaluateAll((elements) =>
+    async sortByLowestPriceAndVerify() {
+        await this.sortDropDownByLowestPrice();
+        await expect(this.page).toHaveURL(/order=price_asc/);
+        const allPrices = await this.getProductPrices();
+        const sortedPrices = [...allPrices].sort((a, b) => a - b);
+        expect(allPrices).toEqual(sortedPrices);
+    }
+
+    async getProductPrices() {
+        return this.prices.evaluateAll((elements) =>
             elements.map((element) =>
                 Number(element.getAttribute("data-value")),
             ),
         );
     }
-    async openFirstBicycle() {
-        await this.productCards.first().click();
+
+    async validateTheCheapestBicycle() {
+        const allPrices = await this.getProductPrices();
+        const firstPrice = allPrices[0];
+        await expect(firstPrice).toBe(Math.min(...allPrices));
+    }
+
+    async openFirstBicycleAndVerifyyPrice() {
+        const allPrices = await this.getProductPrices();
+        const firstPrice = allPrices[0];
+        await this.productCards
+            .locator('ul[class="js-product-list"] li')
+            .first()
+            .click();
+        const productPrice = Number(
+            await this.page
+                .getByTestId("product-price-block")
+                .getAttribute("data-price-amount"),
+        );
+        await expect(firstPrice).toEqual(productPrice);
     }
 }

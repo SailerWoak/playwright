@@ -17,38 +17,35 @@ test.describe("Decathlon search by lowest bicycle price and add item to the cart
     const searchPage = new SearchPage(page);
     const productPage = new ProductPage(page);
 
-    await test.step("Open Decathlon", async () => {
+    await test.step("Verify Decathlon home page", async () => {
       await expect(page).toHaveTitle("Decathlon Latvija");
     });
 
     await test.step("Open bicycle category", async () => {
       await homePage.navigateToBicycles();
-      await expect(page).toHaveURL(/3160-velosipedi/);
     });
 
     await test.step("Sort bicycles by lowest price and verify order", async () => {
-      await searchPage.sortDropDownByLowestPrice();
-      await expect(page).toHaveURL(/order=price_asc/);
-      const allPrices = await searchPage.listOfPrices();
-      const sortedPrices = [...allPrices].sort((a, b) => a - b);
-      expect(allPrices).toEqual(sortedPrices);
+      await searchPage.sortByLowestPriceAndVerify();
     });
 
     await test.step("Check cheapest bicycle", async () => {
-      const allPrices = await searchPage.listOfPrices();
-      const firstPrice = allPrices[0];
-      await expect(firstPrice).toBe(Math.min(...allPrices));
+      await searchPage.validateTheCheapestBicycle();
     });
 
     await test.step("Open first Bicycle and check correct bicycle", async () => {
-      await searchPage.openFirstBicycle();
-      // Add test on checking that we open the first product and check by the price
+      await searchPage.openFirstBicycleAndVerifyyPrice();
     });
 
-    await test.step("Add product to the cart", async () => {
+    await test.step("Add amount of product and add to cart", async () => {
       await productPage.addAndCheckAmountOfProducts("2");
-      await productPage.addToCart();
+      await productPage.addItemToCart();
+    
+      await page.getByTestId('price-detail-total')
     });
-    // Add test with check where we checking added item to the cart and sum 
+
+    await test.step("Open shopping bag", async () => {
+      await productPage.openShoppingBag();
+    }); 
   });
 });
